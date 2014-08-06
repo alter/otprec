@@ -1,0 +1,11 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  full_url: MyString
+  short_url: MyString
+  store_days: MyString
+
+two:
+  full_url: MyString
+  short_url: MyString
+  store_days: MyString

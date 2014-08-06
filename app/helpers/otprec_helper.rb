@@ -1,0 +1,2 @@
+module OtprecHelper
+end
