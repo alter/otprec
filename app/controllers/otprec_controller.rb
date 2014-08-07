@@ -7,7 +7,7 @@ class OtprecController < ApplicationController
 
     text      = params['myform']['text']
     delay     = params[:store_days].to_i
-    url       = ([*('A'..'Z'),*('a'..'z'),*('0'..'9')]-%w(0 1 I O)).sample(32).join
+    url       = Digest::SHA1.hexdigest("#{Time.now}#{([*('A'..'Z'),*('a'..'z'),*('0'..'9')]-%w(0 1 I O)).sample(32).join}")
 
     @record.text      = text
     @record.url       = url
