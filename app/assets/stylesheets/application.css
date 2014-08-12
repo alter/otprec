@@ -13,3 +13,20 @@
  *= require_tree .
  *= require_self
  */
+
+
+html, body {
+  margin: 0;
+  padding: 0;
+}
+
+div .pure-control-group {
+  margin: 20px 0 15px 0;
+  border-top: 0px;
+}
+
+.container {
+  width: 90%;
+  margin: 0px auto;
+  padding: 0px;
+}
