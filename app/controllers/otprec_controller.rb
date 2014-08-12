@@ -9,7 +9,7 @@ class OtprecController < ApplicationController
     delay     = params[:store_days].to_i
     url       = Digest::SHA1.hexdigest("#{Time.now}#{([*('A'..'Z'),*('a'..'z'),*('0'..'9')]-%w(0 1 I O)).sample(32).join}")
 
-    @record.text      = text
+    @record.text      = Base64.encode64(text)
     @record.url       = url
     @record.end_date  = delay.days.from_now
   
@@ -27,7 +27,7 @@ class OtprecController < ApplicationController
     url = params[:url]
     record = Record.find_by! url: url
     if record && record.end_date > Time.now
-      @msg = record.text
+      @msg = Base64.decode64(record.text)
       record.destroy
     else
       record.destroy
