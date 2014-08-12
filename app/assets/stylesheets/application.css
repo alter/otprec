@@ -30,3 +30,8 @@ div .pure-control-group {
   margin: 0px auto;
   padding: 0px;
 }
+
+.footer {
+  text-align: center;
+  padding-top:100px;
+}
