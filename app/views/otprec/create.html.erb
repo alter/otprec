@@ -1,4 +1,7 @@
 <h1>OneTimePassword results</h1>
+<%= javascript_tag do %>
+  copyToClipboard("<%= @msg %>");
+<% end %>
 <%= @msg %>
 <br/>
 <%= link_to 'Create new record', root_url %>
