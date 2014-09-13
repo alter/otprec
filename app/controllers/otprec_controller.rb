@@ -19,7 +19,8 @@ class OtprecController < ApplicationController
       new_url = url_parts.join('/')+'/'+url
       @msg = new_url
     else
-      @msg = "Oops, something goes wrong..."
+      flash[:error] = "Unable to save your password, please try again without hacks" 
+      redirect_to root_url
     end
   end
 
