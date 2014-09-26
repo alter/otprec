@@ -1,7 +1,10 @@
-<h1>OneTimePassword recorder</h1>
+<h1>OneTimeMessage</h1>
 <%= form_tag otprec_create_path, html: {:class => 'pure-form pure-form-stacked'} do %>
   <div class="pure-control-group">
-  <%= text_area :myform, :text, :placeholder => 'Type password here...', :cols => 100, :rows => 10  %>
+  <%= text_area :myform, :text, :placeholder => 'Type message here...', :cols => 100, :rows => 10  %>
+  </div>
+  <div class="pure-control-group">
+  <%= text_area :myform, :salt, :placeholder => 'Type passphrase here for encrypting message here...', :cols =>100, :rows => 1 %>
   </div>
   <div class="pure-control-group">
   <%= label_tag "How many days store this link" %>
