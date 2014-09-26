@@ -1,4 +1,4 @@
-class OtprecController < ApplicationController
+class OtprecsController < ApplicationController
   def index
   end
 
@@ -8,17 +8,13 @@ class OtprecController < ApplicationController
     text      = params['myform']['text']
     delay     = params[:store_days].to_i
     salt      = params['myform']['salt']
-    url       = Digest::SHA1.hexdigest("#{Time.now}#{([*('A'..'Z'),*('a'..'z'),*('0'..'9')]-%w(0 1 I O)).sample(32).join}")
+    id        = Digest::SHA1.hexdigest("#{Time.now}#{([*('A'..'Z'),*('a'..'z'),*('0'..'9')]-%w(0 1 I O)).sample(32).join}")
   
-    puts "SALT_raw is #{salt.inspect}"
-
     salt = ENV["SECRET_KEY_BASE"] if salt.nil? || salt.empty?
     if salt.nil?
       @msg='Admin have to use SECRET_KEY_BASE variable'
       return 
     end
-
-    puts "SALT1 is #{salt}"
 
     begin
       cipher = OpenSSL::Cipher::Cipher.new("aes-256-cbc")
@@ -27,20 +23,20 @@ class OtprecController < ApplicationController
       encrypted = cipher.update(text)
       encrypted << cipher.final
       encrypted = Base64.encode64(encrypted)
-    rescue OpenSSL::CipherError => e
-      @msg = "incorrect password"
+    rescue OpenSSL::Cipher::CipherError => e
+      @msg = "Incorrect passphrase"
     rescue Exception => e
       @msg = "unknown error"
     end
+
     @record.text      = encrypted
-    @record.url       = url
+    @record.url       = id 
     @record.end_date  = delay.days.from_now
 
     if @record.save
       original_url = request.original_url
       url_parts = original_url.split('/')[0...-1]
-      new_url = url_parts.join('/')+'/'+url
-      @msg = new_url
+      @msg = "#{otprecs_url}/#{id}"
     else
       flash[:error] = "Unable to save your password, please try again without hacks" 
       redirect_to root_url
@@ -48,10 +44,11 @@ class OtprecController < ApplicationController
   end
 
   def show
-    url   = params[:url]
-    salt  = params[:salt]
+    url   = params[:id]
+    if(params.has_key?('myform'))
+      salt  = params['myform']['salt']
+    end
     salt = ENV["SECRET_KEY_BASE"] if salt.nil? || salt.empty?
-    puts "SALT2 is #{salt}"
 
     record = Record.find_by! url: url
     if record && record.end_date > Time.now
@@ -65,17 +62,22 @@ class OtprecController < ApplicationController
         @msg = text
         record.destroy
       rescue OpenSSL::Cipher::CipherError => e
-        @msg = "incorrect password"
+        flash[:error] = "Incorrect passphrase" 
+        redirect_to decrypt_otprec_url 
       rescue Exception => e
         @msg = "unknown error"
       end
     else
       record.destroy
-      flash[:error] = "Message wasn't found" 
+      flash[:error] = "Message was removed because it's too old" 
       redirect_to root_url
     end
     rescue ActiveRecord::RecordNotFound
       flash[:error] = "Message wasn't found" 
       redirect_to root_url
+  end
+
+  def decrypt
+    @id = params[:id]
   end
 end

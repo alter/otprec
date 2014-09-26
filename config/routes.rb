@@ -1,10 +1,14 @@
 Rails.application.routes.draw do
 
-  get 'otprec/:url' => 'otprec#show'
-  get   'otprec/index'
-  post  'otprec/create'
+  resources :otprecs, only: [:show, :index, :create] do
+    member do
+      post :show
+      get :decrypt
+    end
+  end
 
-  root  'otprec#index'
+  root to: 'otprecs#index'
+
   # The priority is based upon order of creation: first created -> highest priority.
   # See how all your routes lay out with "rake routes".
 

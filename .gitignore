@@ -17,3 +17,4 @@
 /pids
 /public/assets
 /rerun.sh
+/config/unicorn.rb
