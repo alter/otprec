@@ -1,18 +1,18 @@
 class OtprecsController < ApplicationController
-  def encrypt_text(salt, text)
+  def encrypt_text(passphrase, text)
     cipher = OpenSSL::Cipher::Cipher.new('aes-256-cbc')
     cipher.encrypt
-    cipher.key = Digest::SHA2.digest(salt.chomp)
+    cipher.key = Digest::SHA2.digest(passphrase.chomp)
     encrypted = cipher.update(text)
     encrypted << cipher.final
     encrypted = Base64.encode64(encrypted)
   end
 
-  def decrypt_text(salt, text)
+  def decrypt_text(passphrase, text)
     encrypted = Base64.decode64(text)
     cipher = OpenSSL::Cipher::Cipher.new('aes-256-cbc')
     cipher.decrypt
-    cipher.key = Digest::SHA2.digest(salt.chomp)
+    cipher.key = Digest::SHA2.digest(passphrase.chomp)
     text = cipher.update(encrypted)
     text << cipher.final
   end
@@ -25,17 +25,17 @@ class OtprecsController < ApplicationController
 
     text      = params['myform']['text']
     delay     = params[:store_days].to_i
-    salt      = params['myform']['salt']
+    passphrase      = params['myform']['passphrase']
     id        = Digest::SHA1.hexdigest("#{Time.now}#{([*('A'..'Z'), *('a'..'z'), *('0'..'9')] - %w(0 1 I O)).sample(32).join}")
 
-    salt = ENV['SECRET_KEY_BASE'] if salt.nil? || salt.empty?
-    if salt.nil?
+    passphrase = ENV['SECRET_KEY_BASE'] if passphrase.nil? || passphrase.empty?
+    if passphrase.nil?
       @msg = 'Admin have to use SECRET_KEY_BASE variable'
       return
     end
 
     begin
-      encrypted = encrypt_text(salt, text)
+      encrypted = encrypt_text(passphrase, text)
     rescue OpenSSL::Cipher::CipherError => e
       @msg = 'Incorrect passphrase'
     rescue => e
@@ -57,16 +57,16 @@ class OtprecsController < ApplicationController
   end
 
   def show
-    url   = params[:id]
+    url = params[:id]
     if params.key?('myform')
-      salt  = params['myform']['salt']
+      passphrase = params['myform']['passphrase']
     end
-    salt = ENV['SECRET_KEY_BASE'] if salt.nil? || salt.empty?
+    passphrase = ENV['SECRET_KEY_BASE'] if passphrase.nil? || passphrase.empty?
 
     record = Record.find_by! url: url
     if record && record.end_date > Time.now
       begin
-        text = decrypt_text(salt, record.text)
+        text = decrypt_text(passphrase, record.text)
         @msg = text
         record.destroy
       rescue OpenSSL::Cipher::CipherError => e

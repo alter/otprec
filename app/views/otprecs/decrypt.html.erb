@@ -1,7 +1,7 @@
 <h1>OneTimeMessage</h1>
 <%= form_tag({controller: "otprecs", action: "show"}, method: "post", id: @id, html:{class: 'pure-form pure-form-stacked'}) do %>
   <div class="pure-control-group">
-  <%= text_area :myform, :salt, :placeholder => 'Type passphrase for decrypting message here...', :cols =>100, :rows => 1 %>
+  <%= text_area :myform, :passphrase, :placeholder => 'Type passphrase for decrypting message here...', :cols =>100, :rows => 1 %>
   </div>
   <div class="pure-control-group">
   <%= submit_tag "Decrypt", :class => 'pure-button pure-button-primary' %>
