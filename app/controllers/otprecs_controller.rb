@@ -1,4 +1,22 @@
 class OtprecsController < ApplicationController
+  def encrypt_text(salt, text)
+    cipher = OpenSSL::Cipher::Cipher.new('aes-256-cbc')
+    cipher.encrypt
+    cipher.key = Digest::SHA2.digest(salt.chomp)
+    encrypted = cipher.update(text)
+    encrypted << cipher.final
+    encrypted = Base64.encode64(encrypted)
+  end
+
+  def decrypt_text(salt, text)
+    encrypted = Base64.decode64(text)
+    cipher = OpenSSL::Cipher::Cipher.new('aes-256-cbc')
+    cipher.decrypt
+    cipher.key = Digest::SHA2.digest(salt.chomp)
+    text = cipher.update(encrypted)
+    text << cipher.final
+  end
+
   def index
   end
 
@@ -17,12 +35,7 @@ class OtprecsController < ApplicationController
     end
 
     begin
-      cipher = OpenSSL::Cipher::Cipher.new('aes-256-cbc')
-      cipher.encrypt
-      cipher.key = Digest::SHA2.digest(salt.chomp)
-      encrypted = cipher.update(text)
-      encrypted << cipher.final
-      encrypted = Base64.encode64(encrypted)
+      encrypted = encrypt_text(salt, text)
     rescue OpenSSL::Cipher::CipherError => e
       @msg = 'Incorrect passphrase'
     rescue => e
@@ -53,12 +66,7 @@ class OtprecsController < ApplicationController
     record = Record.find_by! url: url
     if record && record.end_date > Time.now
       begin
-        encrypted = Base64.decode64(record.text)
-        cipher = OpenSSL::Cipher::Cipher.new('aes-256-cbc')
-        cipher.decrypt
-        cipher.key = Digest::SHA2.digest(salt.chomp)
-        text = cipher.update(encrypted)
-        text << cipher.final
+        text = decrypt_text(salt, record.text)
         @msg = text
         record.destroy
       rescue OpenSSL::Cipher::CipherError => e
