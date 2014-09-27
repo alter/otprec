@@ -44,7 +44,7 @@ Style/ClassAndModuleChildren:
 # Offense count: 1
 # Cop supports --auto-correct.
 Style/CommentIndentation:
-  Enabled: false
+  Enabled: true 
 
 # Offense count: 9
 Style/Documentation:
