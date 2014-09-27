@@ -70,7 +70,6 @@ class OtprecsController < ApplicationController
         @msg = text
         record.destroy
       rescue OpenSSL::Cipher::CipherError => e
-        flash[:error] = 'Incorrect passphrase'
         redirect_to decrypt_otprec_url
       rescue => e
         @msg = 'unknown error'
