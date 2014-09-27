@@ -1,4 +1,4 @@
-<h1>OneTimeMessage</h1>
+<h1>OneTimePassword</h1>
 <%= form_tag otprecs_path, html: {:class => 'pure-form pure-form-stacked'} do %>
   <div class="pure-control-group">
   <%= text_area :myform, :text, :placeholder => 'Type message here...', :cols => 100, :rows => 10  %>
@@ -12,4 +12,8 @@
   <div class="pure-control-group">
   <%= submit_tag "Save", :class => 'pure-button pure-button-primary' %>
   </div>
+<% end %>
+
+<%= javascript_tag do %>
+  document.getElementById("myform_text").select();
 <% end %>
