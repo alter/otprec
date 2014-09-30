@@ -11,10 +11,14 @@
     <%= content_tag :div, msg, class: 'pure-alert-warning' %>
   <% end -%>
 <div class="container">
-  <%= yield %>
-</div>
-<div class="footer">
- For trusting this site you could take a look at source code in the <a href="https://github.com/alter/otprec.git">github</a>
+  <div class="body">
+    <%= yield %>
+  </div>
+  <div class="footer">
+    <div class="center">
+       For trusting this site you could take a look at source code in the <a href="https://github.com/alter/otprec.git">github</a>
+    </div>
+  </div>
 </div>
 </body>
 </html>
