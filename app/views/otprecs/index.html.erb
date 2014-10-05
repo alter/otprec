@@ -9,6 +9,7 @@
   <div class="pure-control-group">
   <%= label_tag "Storage time" %>
   <%= number_field_tag :store_days, nil, in: 1..31, step: 1, :value => 1 %>
+  <%= label_tag "day(s)" %>
   <div class="pure-control-group">
   <%= submit_tag "Save", :class => 'pure-button pure-button-primary' %>
   </div>
