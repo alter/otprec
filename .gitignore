@@ -19,3 +19,4 @@
 /rerun.sh
 /config/unicorn.rb
 /public/assets
+*.swp
