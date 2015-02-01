@@ -1,21 +1,4 @@
 class OtprecsController < ApplicationController
-  def encrypt_text(passphrase, text)
-    cipher = OpenSSL::Cipher::Cipher.new('aes-256-cbc')
-    cipher.encrypt
-    cipher.key = Digest::SHA2.digest(passphrase.chomp)
-    encrypted = cipher.update(text)
-    encrypted << cipher.final
-    encrypted = Base64.encode64(encrypted)
-  end
-
-  def decrypt_text(passphrase, text)
-    encrypted = Base64.decode64(text)
-    cipher = OpenSSL::Cipher::Cipher.new('aes-256-cbc')
-    cipher.decrypt
-    cipher.key = Digest::SHA2.digest(passphrase.chomp)
-    text = cipher.update(encrypted)
-    text << cipher.final
-  end
 
   def index
   end
@@ -23,26 +6,11 @@ class OtprecsController < ApplicationController
   def create
     @record   = Record.new
 
-    text      = params['myform']['text']
-    delay     = params[:store_days].to_i
-    passphrase      = params['myform']['passphrase']
+    text      = params['text']
+    delay     = params['store_days'].to_i
     id        = Digest::SHA1.hexdigest("#{Time.now}#{([*('A'..'Z'), *('a'..'z'), *('0'..'9')] - %w(0 1 I O)).sample(32).join}")
 
-    passphrase = ENV['SECRET_KEY_BASE'] if passphrase.nil? || passphrase.empty?
-    if passphrase.nil?
-      @msg = 'Admin have to use SECRET_KEY_BASE variable'
-      return
-    end
-
-    begin
-      encrypted = encrypt_text(passphrase, text)
-    rescue OpenSSL::Cipher::CipherError => e
-      @msg = 'Incorrect passphrase'
-    rescue => e
-      @msg = 'unknown error'
-    end
-
-    @record.text      = encrypted
+    @record.text      = text
     @record.url       = id
     @record.end_date  = delay.days.from_now
 
@@ -51,7 +19,7 @@ class OtprecsController < ApplicationController
       url_parts = original_url.split('/')[0...-1]
       @msg = "#{otprecs_url}/#{id}"
     else
-      flash[:error] = 'Unable to save your password, please try again without hacks'
+      flash[:error] = 'Unable to save message, please try again without later'
       redirect_to root_url
     end
   end
@@ -65,15 +33,7 @@ class OtprecsController < ApplicationController
 
     record = Record.find_by! url: url
     if record && record.end_date > Time.now
-      begin
-        text = decrypt_text(passphrase, record.text)
-        @msg = text
-        record.destroy
-      rescue OpenSSL::Cipher::CipherError => e
-        redirect_to decrypt_otprec_url
-      rescue => e
-        @msg = 'unknown error'
-      end
+        @msg = record.text
     else
       record.destroy
       flash[:error] = "Message was removed because it's too old"
@@ -84,7 +44,9 @@ class OtprecsController < ApplicationController
       redirect_to root_url
   end
 
-  def decrypt
-    @id = params[:id]
+  def destroy
+    url = params[:id]
+    record = Record.find_by! url: url
+    record.destroy
   end
 end

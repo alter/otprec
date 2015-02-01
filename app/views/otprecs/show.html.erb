@@ -1,2 +1,19 @@
 <h1>OneTimePassword</h1>
-<%= @msg.html_safe %>
+<pre>
+<div id="message"></div>
+</pre>
+<%= javascript_tag do %>
+  var key = prompt("Please enter message key");
+  var message = "<%= @msg.html_safe %>";
+  try {
+    decrypted = CryptoJS.AES.decrypt(message, key);
+    decrypted_msg = decrypted.toString(CryptoJS.enc.Utf8);
+  } catch( e ) {
+    alert( e );
+  } finally {
+    $('#message').text(decrypted_msg);
+    if( decrypted_msg ){
+      $.post(document.URL+'/destroy');
+    }
+  }
+<% end %>

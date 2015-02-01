@@ -3,7 +3,7 @@ Rails.application.routes.draw do
   resources :otprecs, only: [:show, :index, :create] do
     member do
       post :show
-      get :decrypt
+      post 'destroy'
     end
   end
 
