@@ -6,10 +6,13 @@ $(document).on 'click', '.subclick', ->
   text = $('#myform_text').val()
   pass = $('#myform_passphrase').val()
   days = $('#store_days').val()
-  encrypted = CryptoJS.AES.encrypt(text, pass)
-  $.post '/otprecs', {
-    text: encrypted.toString(CryptoJS.enc.utf8);
-    store_days: days
-  }, (data) ->
-    $('body').html(data);
-    return
+  if text
+    encrypted = CryptoJS.AES.encrypt(text, pass)
+    $.post '/otprecs', {
+      text: encrypted.toString(CryptoJS.enc.utf8);
+      store_days: days
+    }, (data) ->
+      $('body').html(data);
+      return
+  else
+    alert('Please, fill text field!');
