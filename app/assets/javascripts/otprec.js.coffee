@@ -7,7 +7,9 @@ $(document).on 'click', '.subclick', ->
   pass = $('#myform_passphrase').val()
   days = $('#store_days').val()
   encrypted = CryptoJS.AES.encrypt(text, pass)
-  $.post '/otprecs',
+  $.post '/otprecs', {
     text: encrypted.toString(CryptoJS.enc.utf8);
     store_days: days
-  return
+  }, (data) ->
+    $('body').html(data);
+    return
