@@ -15,8 +15,8 @@ class OtprecsController < ApplicationController
     @record.end_date  = delay.days.from_now
 
     if @record.save
-      original_url = request.original_url
-      url_parts = original_url.split('/')[0...-1]
+     # original_url = request.original_url
+     # url_parts = original_url.split('/')[0...-1]
       @msg = "#{otprecs_url}/#{id}"
     else
       flash[:error] = 'Unable to save message, please try again without later'
