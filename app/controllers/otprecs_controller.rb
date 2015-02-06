@@ -8,7 +8,7 @@ class OtprecsController < ApplicationController
 
     text      = params['text']
     delay     = params['store_days'].to_i
-    id        = Digest::SHA1.hexdigest("#{Time.now}#{([*('A'..'Z'), *('a'..'z'), *('0'..'9')] - %w(0 1 I O)).sample(32).join}")
+    id        = Digest::SHA256.hexdigest("#{Time.now}#{([*('A'..'Z'), *('a'..'z'), *('0'..'9')] - %w(0 1 I O)).sample(32).join}")
 
     @record.text      = text
     @record.url       = id
