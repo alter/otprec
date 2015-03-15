@@ -42,5 +42,4 @@ gem 'execjs'
 gem 'therubyracer'
 gem 'sidekiq'
 gem 'sidekiq-cron'
-gem 'rubocop', :git => 'https://github.com/bbatsov/rubocop.git', require: false
 gem 'aescrypt'

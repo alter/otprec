@@ -1,5 +1,4 @@
 class OtprecsController < ApplicationController
-
   def index
   end
 
@@ -15,8 +14,6 @@ class OtprecsController < ApplicationController
     @record.end_date  = delay.days.from_now
 
     if @record.save
-     # original_url = request.original_url
-     # url_parts = original_url.split('/')[0...-1]
       @msg = "#{otprecs_url}/#{id}"
     else
       flash[:error] = 'Unable to save message, please try again without later'
@@ -33,7 +30,7 @@ class OtprecsController < ApplicationController
 
     record = Record.find_by! url: url
     if record && record.end_date > Time.now
-        @msg = record.text
+      @msg = record.text
     else
       record.destroy
       flash[:error] = "Message was removed because it's too old"
